@@ -1,0 +1,53 @@
+college
+program
+students - register - courses
+
+courses - fee - college booard
+
+parents - grades, assignments, courses
+
+
+STUDENT
+- firstName
+- lastName
+- program
+
+PARENT
+- firstName
+- lastName
+
+REGISTRATION
+- student
+- course
+- payment
+
+SUBMISSION
+- registration
+- score
+- assessment
+
+ASSESSMENT
+- type
+- grading
+- intsruction
+
+RELATIONSHIP
+- parent
+- student
+- type
+- previledge
+
+COURSE
+- courseTitle
+- courseCode
+- scheme
+
+ACCOUNT
+- fee
+- academicSession
+- date
+- course
+
+PROGRAMCOURSE
+- program
+- course
