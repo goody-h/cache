@@ -1,8 +1,8 @@
 
 class LRUCache (object):
     
-    def __init__(self) -> None:
-        self.cache_size = 3
+    def __init__(self, capacity) -> None:
+        self.cache_size = capacity
         self.items = {}
         self.first = None
         self.last = None
@@ -63,7 +63,7 @@ class LRUCache (object):
             print(stack)
         print(self.items)
 
-lru = LRUCache()
+lru = LRUCache(3)
 
 lru.get('a') # None
 
