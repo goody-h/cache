@@ -1,6 +1,9 @@
 
+from requests import put
+
+
 class LRUCache (object):
-    
+
     def __init__(self, capacity) -> None:
         self.cache_size = capacity
         self.items = {}
@@ -8,50 +11,61 @@ class LRUCache (object):
         self.last = None
 
     def get(self, key):
-        item = self.items.get(key)
-        if item != None:
-            previous = item['previous']
-            next = item['next']
-            if previous != None:
-                self.items[previous]['next'] = next
-            if next != None:
-                self.items[next]['previous'] = previous
+        try:
+            value = self.items[key]['value']
+        except:
+            value = -1
 
-            self.items[key]['previous'] = None
-            if self.first != key:
-                self.items[key]['next'] = self.first
-                self.items[self.first]['previous'] = key
-            self.first = key
-            if previous != None and self.items[previous]['next'] == None:
-                self.last = previous
-        return item
-
+        if value != None and value != -1:
+            self.put(key, value)
+        return value
 
     def put(self, key, value):
         item = self.items.get(key)
         previous = None
+        next = None
+        former_last_previous = None
         if  item != None:
             previous = item['previous']
             next = item['next']
-            if previous != None:
-                self.items[previous]['next'] = next
-            if next != None:
-                self.items[next]['previous'] = previous
-        elif len(self.items) == self.cache_size:
-            previous = self.items[self.last]['previous']
-            self.items[previous]['next'] = None
-            del self.items[self.last]
+        former_first = self.first
+        former_last = self.last
 
-        self.items[key] = {'value': value, 'previous': None, 'next': self.first}
-        if self.first != None:
-            self.items[self.first]['previous'] = key
+        if former_last != None:
+            former_last_previous = self.items[former_last]['previous']
+
+        data = {'value': value, 'previous': None, 'next': None}
+        self.items[key] = data
+
+        if key != former_first:
+            data['next'] = former_first
+        else:
+            data['next'] = next
+
+        if previous != None:
+            self.items[previous]['next'] = next
+        else:
+            previous = key
+
+        if next != None:
+            self.items[next]['previous'] = previous
+        if former_first != None and former_first != key:
+            self.items[former_first]['previous'] = key
 
         self.first = key
-        if self.last == None:
-            self.last = key
 
-        if previous != None and self.items[previous]['next'] == None:
-            self.last = previous
+        if len(self.items) > self.cache_size:
+            if former_last_previous != None:
+                self.items[former_last_previous]['next'] = None
+            elif self.items[former_last]['previous'] == key:
+                data['next'] = None
+            del self.items[former_last]
+
+        if next == None:
+            if former_last_previous != None and self.items[former_last_previous]['next'] == None:
+                self.last = former_last_previous
+            elif self.items[previous]['next'] == None:
+                self.last = previous
 
     def prt(self):
         if self.first != None:
@@ -61,31 +75,62 @@ class LRUCache (object):
                 stack.append(next)
                 next = self.items[next]['next']
             print(stack)
+        print(self.first)
+        print(self.last)
         print(self.items)
+
+
 
 lru = LRUCache(3)
 
-lru.get('a') # None
+["put","put","put","put","get","get","get","get","put","get","get","get","get","get"]
+arr = [[1,1],[2,2],[3,3],[4,4],[4],[3],[2],[1],[5,5],[1],[2],[3],[4],[5]]
 
-lru.put('a', 1)
-lru.put('b', 2)
-lru.put('c', 3)
+l = 2
+for a in arr:
+    if len(a) == 1:
+        lru.get(a[0])
+    else: lru.put(a[0], a[1])
+    print('### Next')
+    print(l)
+    l += 1
 
-lru.prt() # c, b, a
 
-lru.put('a', 3)
 
-lru.prt() # a, c, b
 
-lru.get('x')
 
-lru.prt() # a, c, b
 
-lru.get('b')
 
-lru.prt() # b, a, c
+# lru.get('a') # None
 
-lru.put('d', 4)
+# lru.put('a', 1)
+# lru.prt() # c, b, a
+# lru.put('a', 1)
+# lru.prt() # c, b, a
 
-lru.prt() # d, b, a
+# lru.get('a') # None
+# lru.get('a') # None
+# lru.put('b', 1)
+# lru.prt() # c, b, a
+# lru.put('b', 2)
+# lru.prt() # c, b, a
+# lru.put('c', 3)
+
+# lru.prt() # c, b, a
+
+# lru.put('a', 3)
+
+# lru.prt() # a, c, b
+
+# lru.get('x')
+
+# lru.prt() # a, c, b
+
+# lru.get('b')
+
+# lru.prt() # b, a, c
+
+# lru.put('d', 4)
+
+# lru.prt() # d, b, a
 
